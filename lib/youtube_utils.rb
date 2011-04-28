@@ -60,7 +60,7 @@ class YoutubeUtils
   def convert_itag_to_type itag
     case itag.to_i
     when 0, 6
-      return "video/flv; codecs=\" h263, mp3 mono\""
+      return "video/flv; codecs=\"h263, mp3 mono\""
     when 5
       return "video/flv; codecs=\"h263, mp3 stereo\""
     when 34, 35
@@ -72,7 +72,7 @@ class YoutubeUtils
     when 18, 22, 37, 38, 78
       return "video/mp4; codecs=\"h264, aac stereo\""
     when 43, 45
-      return "video/webm; codecs=\"vp8.0, vorbis stereo\""
+      return "video/webm; codecs=\"vp8, vorbis stereo\""
     else
       return "unknown #{itag}"
     end
