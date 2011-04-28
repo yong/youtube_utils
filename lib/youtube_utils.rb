@@ -60,9 +60,9 @@ class YoutubeUtils
   def convert_itag_to_type itag
     case itag.to_i
     when 0, 6
-      return "audio/mp3; codecs=\" H.263, mp3 mono\""
+      return "video/flv; codecs=\" h263, mp3 mono\""
     when 5
-      return "audio/mp3; codecs=\"h263, mp3 stereo\""
+      return "video/flv; codecs=\"h263, mp3 stereo\""
     when 34, 35
       return "video/flv; codecs=\"h264, aac stereo\""
     when 13
