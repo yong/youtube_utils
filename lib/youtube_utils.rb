@@ -1,11 +1,11 @@
-require 'rubygems'
 require 'net/http'
 require 'yajl'
+require 'uri'
 
 #http://unlockforus.blogspot.com/2010/04/downloading-youtube-videos-not-working.html
 #http://board.jdownloader.org/showthread.php?t=18520
 class YoutubeUtils
-  def get_video youtube_watch_url
+  def get_videos youtube_watch_url
     res = get_webpage(youtube_watch_url);
     unless res.code == '200'
       puts res.code
@@ -34,6 +34,25 @@ class YoutubeUtils
 		result.concat(convert_fmt_stream_map(fmt_stream_map, fmt_list)) if fmt_list&&fmt_stream_map
     
     return result
+  end
+  
+  #input: http://www.youtube.com/watch?v=cRdxXPV9GNQ
+  #output: cRdxXPV9GNQ
+  def self.get_vid url
+    querys = URI.parse(url).query.split('&')
+		querys.each {|x|
+		  a = x.split('=')
+		  if a[0] == 'v'
+		    return a[1]
+		  end
+		}
+		return nil
+  end
+  
+  #input: video/webm; codecs="vp8.0, v
+  #outut: webm
+  def self.type2suffix type
+    return type.split(';')[0].split('/')[1]
   end
   
   private
@@ -130,8 +149,3 @@ class YoutubeUtils
   end
 end
 
-if $0 == __FILE__
-  require 'pp'
-  pp YoutubeUtils.new.get_video 'http://www.youtube.com/watch?v=cRdxXPV9GNQ'
-  #pp YoutubeUtils.new.get_video 'http://www.youtube.com/watch?v=gEtuXrV_KnM'
-end

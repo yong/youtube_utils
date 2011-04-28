@@ -1,0 +1,20 @@
+This is a youtube downloader.
+
+==Install==
+gem install youtube_utils
+
+==Usage==
+
+To use in as a command line tool:
+youtube_utils <youtube_url>
+For example:
+$youtube_utils http://www.youtube.com/watch?v=cRdxXPV9GNQ
+
+To use it in your code:
+requires 'youtube_utils'
+YoutubeUtils.new.get_videos 'http://www.youtube.com/watch?v=cRdxXPV9GNQ'
+
+YoutubeUtils#get_videos will return a list videos along with their url/type/quality. You can NOT run it on the server and give the urls to someone else. The url is only valid for machines that execute YoutubeUtils#get_videos method (youtube generates an unique url for each computer). 
+
+==License==
+Copyright 2011 Intridea Inc ( http://intridea.com ), released under the MIT license.

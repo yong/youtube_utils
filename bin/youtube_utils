@@ -1,0 +1,59 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'youtube_utils'
+
+def usage
+ puts 'Usage:'
+ puts 'youtube_utils <youtube_url>'
+ puts 'Example:'
+ puts 'youtube_utils http://www.youtube.com/watch?v=cRdxXPV9GNQ'
+end
+
+def download url, output
+  if `/usr/bin/env curl --version` =~ /libcurl/
+    run_command "/usr/bin/env curl -L -C - -o #{output} '#{url}'"
+  elsif `/usr/bin/env wget --version` =~ /Wget/
+    run_command "/usr/bin/env wget '#{url}' -c -O #{output}"
+  else
+    puts "Can not find curl or wget!"
+  end
+end
+
+def ask_user_which_one_to_download videos
+  i = 0
+  videos.each {|x|
+    puts "#{i}\t#{x['quality']}\t#{YoutubeUtils.type2suffix(x['type'])}"
+    i += 1
+  }
+  print "Please select a video to download by enter its number:"
+  return $stdin.gets
+end
+
+def build_filename url, type
+  vid = YoutubeUtils.get_vid(url)
+  suffix = YoutubeUtils.type2suffix(type)
+  return vid + "." + suffix
+end
+
+def run_command command
+  puts command
+  result = `#{command}`
+  puts result
+  return result
+end
+
+def run url
+  videos = YoutubeUtils.new.get_videos url
+  index = ask_user_which_one_to_download(videos).to_i
+  download videos[index]['url'], build_filename(url, videos[index]['type'])
+end
+
+if $0 == __FILE__
+  if ARGV.empty?
+    usage
+  else
+    run ARGV[0]
+  end
+end
+
