@@ -7,7 +7,8 @@ Gem::Specification.new do |s|
   s.date = %q{2011-04-28}
   s.email = ["yong@intridea.com"]
   s.files = Dir['lib/**/*.rb'] + ['bin/youtube_utils']
-  s.summary = %q{youtube_utils}
+  s.summary = %q{youtube downloader}
+  s.executables = ['youtube_utils']
   s.homepage = "http://github.com/yong/youtube_utils"
   s.add_dependency(%q<yajl-ruby>)
 end

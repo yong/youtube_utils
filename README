@@ -1,7 +1,7 @@
-This is a youtube downloader.
+This is a youtube downloader (and it does use the old and invalid get_video url).
 
 ==Install==
-gem install youtube_utils
+sudo gem install youtube_utils
 
 ==Usage==
 
