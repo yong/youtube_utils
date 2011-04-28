@@ -73,13 +73,35 @@ class YoutubeUtils
     result = []
     a1 = fmt_stream_map.split(',')
     a2 = fmt_list.split(',')
+    i = 0
     a1.each {|x|
       a11 = x.split('|')
       itag = a11[0]
       url = a11[1]
-      result << {'url' => url, 'type' => convert_itag_to_type(itag)}
+      
+      a21 = a2[i].split('/')
+      resolution = a21[1]
+      result << {'url' => url, 'type' => convert_itag_to_type(itag), 'quality' => resolution2quality(resolution)}
+      i += 1;
     }
     return result
+  end
+  
+  def resolution2quality resolution
+    height = resolution.split('x')[1].to_i
+    if height > 1080
+      return "Original"
+    elsif height > 720
+      return "1080p"
+    elsif height > 576
+      return "720p"
+    elsif height > 360
+      return "480p"
+    elsif height > 240
+      return "360p"
+    else
+      return "240p"
+    end
   end
   
   def get_webpage youtube_watch_url
