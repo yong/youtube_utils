@@ -1,4 +1,4 @@
-This is a youtube downloader (and it does use the old and invalid get_video url).
+This is a youtube downloader that works (it does use the old and invalid http://youtube.com/get_video url).
 
 ==Install==
 sudo gem install youtube_utils
