@@ -5,7 +5,7 @@ sudo gem install youtube_utils
 
 ==Usage==
 
-To use in as a command line tool:
+To use it as a command line tool:
 youtube_utils <youtube_url>
 For example:
 $youtube_utils http://www.youtube.com/watch?v=cRdxXPV9GNQ
