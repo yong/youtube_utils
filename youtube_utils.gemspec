@@ -1,7 +1,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{youtube_utils}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.authors = ["Xue Yong Zhi"]
   s.date = %q{2011-04-28}
