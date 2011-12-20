@@ -10,5 +10,4 @@ Gem::Specification.new do |s|
   s.summary = %q{youtube downloader}
   s.executables = ['youtube_utils']
   s.homepage = "http://github.com/yong/youtube_utils"
-  s.add_dependency(%q<yajl-ruby>)
 end

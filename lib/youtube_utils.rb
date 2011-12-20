@@ -1,11 +1,9 @@
-require 'rubygems'
-require 'stringio'
 require 'net/http'
-require 'yajl'
 require 'uri'
 
 #http://unlockforus.blogspot.com/2010/04/downloading-youtube-videos-not-working.html
 #http://board.jdownloader.org/showthread.php?t=18520
+#http://userscripts.org/topics/83095?page=1#posts-372119
 class YoutubeUtils
 
   def initialize(debug = false)
@@ -18,24 +16,13 @@ class YoutubeUtils
       raise res.code 
     end
     
-    play_config = get_PLAYER_CONFIG(res.body)
-    unless play_config
-      raise "no PLAYER_CONFIG"
-    end
-    
-    args = json_to_hash(play_config)['args']
-    unless args
-      raise "no args"
-    end
-    
     result = []
     
-		html5_fmt_map = args['html5_fmt_map']
-		result.concat(convert_html5_fmt_map(html5_fmt_map)) if html5_fmt_map
-		
-		fmt_stream_map = args['fmt_stream_map']
-		fmt_list = args['fmt_list']
-		result.concat(convert_fmt_stream_map(fmt_stream_map, fmt_list)) if fmt_list&&fmt_stream_map
+    fmt_stream_map = get_url_encoded_fmt_stream_map(res.body)
+		fmt_list = get_fmt_list(res.body)
+    puts fmt_stream_map, fmt_list if @debug
+
+		result.concat(parse_fmt_stream_map(fmt_stream_map, fmt_list)) if fmt_list&&fmt_stream_map
     
     return result
   end
@@ -81,30 +68,31 @@ class YoutubeUtils
       return "unknown #{itag}"
     end
   end
-  
-  #{"url"=>"http://v5.lscache8.c.youtube.com/videoplayback?...", "type"=>"video/webm; codecs=\"vp8.0, vorbis\"", "itag"=>43, "quality"=>"medium"}
-  def convert_html5_fmt_map a
-    result = []
-    a.each {|x|
-      result << {'url' => x['url'], 'type' => x['type'], 'quality' => x['quality']}
+
+  def querystring_2_hash s
+    h = {}
+    s.split("\\u0026").each { |x|
+      a = x.split("=")
+      h[a[0]] = a[1] 
     }
-    return result
+    h
   end
   
+  #url=http://o-o.preferred.comcast-iad1.v2.lscache7.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Calgorithm%2Cburst%2Cfactor%2Ccp&fexp=907508%2C903945%2C912602&algorithm=throttle-factor&itag=5&ip=69.0.0.0&burst=40&sver=3&signature=188F0E975207AB14B86050D0D21CFFFEFBCE4B00.D4BF3A75D2670F58B4FF4FF3AFADD1174A9EE574&source=youtube&expire=1324417594&key=yt1&ipbits=8&factor=1.25&cp=U0hRSVRMVV9OTkNOMV9MRllGOjdZSVc4aUgtZUFB&id=ef388a3d0169fd70\u0026quality=small\u0026fallback_host=tc.v2.cache7.c.youtube.com\u0026type=video/x-flv\u0026itag=5
   #22/1280x720/9/0/115
-  def convert_fmt_stream_map fmt_stream_map, fmt_list
+  def parse_fmt_stream_map fmt_stream_map, fmt_list
     result = []
     a1 = fmt_stream_map.split(',')
     a2 = fmt_list.split(',')
     i = 0
     a1.each {|x|
-      a11 = x.split('|')
-      itag = a11[0]
-      url = a11[1]
+      h = querystring_2_hash(x)
+      itag = h['itag']
+      url = h['url']
       
       a21 = a2[i].split('/')
       resolution = a21[1]
-      result << {'url' => url, 'type' => convert_itag_to_type(itag), 'quality' => resolution2quality(resolution)}
+      result << {'url' => URI.unescape(url), 'type' => convert_itag_to_type(itag), 'quality' => resolution2quality(resolution)}
       i += 1;
     }
     return result
@@ -147,15 +135,18 @@ class YoutubeUtils
     end
   end
   
-  def get_PLAYER_CONFIG body
-    #puts boby if @debug
-    body[/\'PLAYER_CONFIG\':(.*),\n/]
-    puts $1 if @debug
+  def get_fmt_list body
+    body[/\"fmt_list\":\s?\"(.+?)\"/]
+    return $1
+  end
+
+  def get_url_encoded_fmt_stream_map body
+    body[/\"url_encoded_fmt_stream_map\":\s?\"(.+?)\"/]
     return $1
   end
 end
 
 if __FILE__ == $0
-  puts YoutubeUtils.new(true).get_videos "http://www.youtube.com/watch?v=7ziKPQFp_XA"
+  p YoutubeUtils.new(true).get_videos "http://www.youtube.com/watch?v=7ziKPQFp_XA"
 end
 
