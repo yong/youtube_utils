@@ -45,6 +45,7 @@ end
 
 def run url
   videos = YoutubeUtils.new.get_videos url
+  return if videos.empty? 
   index = ask_user_which_one_to_download(videos).to_i
   download videos[index]['url'], build_filename(url, videos[index]['type'])
 end
