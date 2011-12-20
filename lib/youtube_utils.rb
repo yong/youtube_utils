@@ -15,20 +15,17 @@ class YoutubeUtils
   def get_videos youtube_watch_url
     res = get_webpage(youtube_watch_url);
     unless res.code == '200'
-      puts res.code
-      return []
+      raise res.code 
     end
     
-    hash = json_to_hash(get_PLAYER_CONFIG(res.body))
-    unless hash
-      puts "no PLAYER_CONFIG"
-      return []
+    play_config = get_PLAYER_CONFIG(res.body)
+    unless play_config
+      raise "no PLAYER_CONFIG"
     end
     
-    args = hash['args']
+    args = json_to_hash(play_config)['args']
     unless args
-      puts "no args"
-      return []
+      raise "no args"
     end
     
     result = []
@@ -151,8 +148,8 @@ class YoutubeUtils
   end
   
   def get_PLAYER_CONFIG body
-    puts boby if @debug
-    body[/\'PLAYER_CONFIG\':(.*)\}\)\;\n/]
+    #puts boby if @debug
+    body[/\'PLAYER_CONFIG\':(.*),\n/]
     puts $1 if @debug
     return $1
   end
