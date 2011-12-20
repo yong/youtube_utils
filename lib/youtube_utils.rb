@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'stringio'
 require 'net/http'
 require 'yajl'
@@ -6,6 +7,11 @@ require 'uri'
 #http://unlockforus.blogspot.com/2010/04/downloading-youtube-videos-not-working.html
 #http://board.jdownloader.org/showthread.php?t=18520
 class YoutubeUtils
+
+  def initialize(debug = false)
+    @debug = debug
+  end
+
   def get_videos youtube_watch_url
     res = get_webpage(youtube_watch_url);
     unless res.code == '200'
@@ -145,8 +151,14 @@ class YoutubeUtils
   end
   
   def get_PLAYER_CONFIG body
+    puts boby if @debug
     body[/\'PLAYER_CONFIG\':(.*)\}\)\;\n/]
+    puts $1 if @debug
     return $1
   end
+end
+
+if __FILE__ == $0
+  puts YoutubeUtils.new(true).get_videos "http://www.youtube.com/watch?v=7ziKPQFp_XA"
 end
 
