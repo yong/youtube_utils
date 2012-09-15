@@ -89,10 +89,11 @@ class YoutubeUtils
       h = querystring_2_hash(x)
       itag = h['itag']
       url = h['url']
+      sig = h['sig']
       
       a21 = a2[i].split('/')
       resolution = a21[1]
-      result << {'url' => URI.unescape(url), 'type' => convert_itag_to_type(itag), 'quality' => resolution2quality(resolution)}
+      result << {'url' => URI.unescape(url) + "&signature=#{sig}", 'type' => convert_itag_to_type(itag), 'quality' => resolution2quality(resolution)}
       i += 1;
     }
     return result
@@ -147,6 +148,6 @@ class YoutubeUtils
 end
 
 if __FILE__ == $0
-  p YoutubeUtils.new(true).get_videos "http://www.youtube.com/watch?v=7ziKPQFp_XA"
+  p YoutubeUtils.new(true).get_videos "http://www.youtube.com/watch?v=FZTCmkyQAdM"
 end
 
